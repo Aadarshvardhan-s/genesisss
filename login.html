@@ -208,6 +208,18 @@
   </div>
 </div>
 
+<script>
+  // Fallback: automatically dismiss the loader after 2.5 seconds if the main module script fails to load/execute
+  setTimeout(function() {
+    var loader = document.getElementById('page-loader');
+    if (loader && !loader.classList.contains('is-done')) {
+      loader.classList.add('is-done');
+      loader.setAttribute('aria-hidden', 'true');
+      console.warn('Page loader dismissed by inline fallback script.');
+    }
+  }, 2500);
+</script>
+
 <div id="toast-root" aria-live="polite"></div>
 
 <div class="page">
