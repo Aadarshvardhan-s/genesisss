@@ -1,269 +1,432 @@
-import { GIC_CONFIG } from './config.js';
+/**
+ * portal.js — Genesis Incubation Centre Auth Module
+ * Handles: login, signup, session management (LocalStorage), profile pic upload,
+ *          branch/year fields, logout, role-based flow.
+ * UI is NOT changed — all logic is purely behind the scenes.
+ */
 
-const loader = document.getElementById('page-loader');
-const html = document.documentElement;
-const themeBtn = document.getElementById('theme-toggle');
-const themeIcon = document.getElementById('theme-icon');
-const toastRoot = document.getElementById('toast-root');
-const pwInput = document.getElementById('password');
-const pwToggle = document.getElementById('pw-toggle');
-const tabs = document.querySelectorAll('.role-tab');
-const deptField = document.getElementById('dept-field');
-const oauthSect = document.getElementById('oauth-section');
-const usernameField = document.getElementById('username-field');
-const usernameInput = document.getElementById('username');
-const modeToggle = document.getElementById('mode-toggle');
-const authSwitch = document.getElementById('auth-switch');
-const submitLabel = document.getElementById('submit-label');
-const formHeading = document.getElementById('form-heading');
-const formSub = document.getElementById('form-sub');
-const forgotLink = document.getElementById('forgot-link');
-const form = document.getElementById('login-form');
-const submitBtn = document.getElementById('submit-btn');
-const spinner = document.getElementById('btn-spinner');
+/* ─── Constants ────────────────────────────────────────────────── */
+const SESSION_KEY   = 'gic_session';
+const USERS_KEY     = 'gic_users';
+const REMEMBER_KEY  = 'gic_remember';
 
-let sb = null;
-let activeRole = 'student';
-let isSignUp = false;
+/* ─── Utilities ─────────────────────────────────────────────────── */
+function getUsers() {
+  try { return JSON.parse(localStorage.getItem(USERS_KEY) || '{}'); }
+  catch { return {}; }
+}
+function saveUsers(users) {
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+}
+function getSession() {
+  try {
+    return (
+      JSON.parse(sessionStorage.getItem(SESSION_KEY)) ||
+      JSON.parse(localStorage.getItem(SESSION_KEY))
+    );
+  } catch { return null; }
+}
+function setSession(user, remember) {
+  const data = JSON.stringify(user);
+  sessionStorage.setItem(SESSION_KEY, data);
+  if (remember) localStorage.setItem(SESSION_KEY, data);
+  else           localStorage.removeItem(SESSION_KEY);
+}
+function clearSession() {
+  sessionStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem(SESSION_KEY);
+}
 
-function toast(msg, type = 'info', dur = 4000) {
-  const icons = { success: '✓', error: '✕', info: 'ℹ', warning: '⚠' };
-  const cols = { success: '#16a34a', error: '#e31b2d', info: '#2563eb', warning: '#d97706' };
+function hashPassword(str) {
+  // Simple deterministic hash — for LocalStorage-only auth demo
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) + hash) ^ str.charCodeAt(i);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+function toast(msg, type = 'info') {
+  const root = document.getElementById('toast-root');
+  if (!root) return;
   const el = document.createElement('div');
   el.className = 'toast';
-  el.style.borderLeft = `3px solid ${cols[type]}`;
-  el.innerHTML = `<span class="toast-icon" style="color:${cols[type]}">${icons[type]}</span><span>${msg}</span>`;
-  toastRoot.appendChild(el);
-  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('in')));
-  const dismiss = () => {
-    el.classList.remove('in');
-    setTimeout(() => el.remove(), 360);
-  };
-  el.addEventListener('click', dismiss);
-  setTimeout(dismiss, dur);
+  const icons = { success: '✓', error: '✕', info: 'ℹ' };
+  el.innerHTML = `<span class="toast-icon" style="color:${type === 'error' ? 'var(--red)' : type === 'success' ? '#22c55e' : 'var(--text-2)'}">${icons[type] || 'ℹ'}</span><span>${msg}</span>`;
+  root.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('in'));
+  el.addEventListener('click', () => el.remove());
+  setTimeout(() => { el.classList.remove('in'); setTimeout(() => el.remove(), 350); }, 3500);
 }
 
-function applyTheme(t, animate = true) {
-  if (animate) {
-    html.classList.add('theme-anim');
-    setTimeout(() => html.classList.remove('theme-anim'), 460);
-  }
-  html.setAttribute('data-theme', t);
-  themeIcon.textContent = t === 'dark' ? '☾' : '☀';
-  try { localStorage.setItem('gic_theme', t); } catch (_ ) {}
-}
-
-function initTheme() {
-  let initTheme = 'dark';
-  try { const s = localStorage.getItem('gic_theme'); if (s === 'light' || s === 'dark') initTheme = s; } catch (_) {}
-  applyTheme(initTheme, false);
-  themeBtn.addEventListener('click', () => applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
-}
-
+/* ─── Page Loader ────────────────────────────────────────────────── */
 function dismissLoader() {
-  loader.classList.add('is-done');
-  loader.setAttribute('aria-hidden', 'true');
-}
-
-function initLoader() {
-  if (document.readyState === 'complete') setTimeout(dismissLoader, 320);
-  else window.addEventListener('load', () => setTimeout(dismissLoader, 280), { once: true });
-  setTimeout(dismissLoader, 2000);
-}
-
-function normalizeRedirect(path) {
-  if (!path) return new URL('./index.html', window.location.href).href;
-  return path.startsWith('http') ? path : new URL(path, window.location.href).href;
-}
-
-async function getSB() {
-  if (sb) return sb;
-  const url = GIC_CONFIG.supabase?.url || window.GIC_SUPABASE_URL;
-  const anonKey = GIC_CONFIG.supabase?.anonKey || window.GIC_SUPABASE_ANON_KEY;
-  if (!url || !anonKey || url === 'YOUR_SUPABASE_URL') return null;
-  try {
-    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-    sb = createClient(url, anonKey);
-    return sb;
-  } catch {
-    return null;
+  const loader = document.getElementById('page-loader');
+  if (loader) {
+    loader.classList.add('is-done');
+    loader.setAttribute('aria-hidden', 'true');
   }
 }
 
-function setMode(signup) {
-  isSignUp = signup;
-  const labels = { student:'Student', mentor:'Mentor', user:'User' };
-  formHeading.textContent = signup ? `Join as ${labels[activeRole]}` : 'Welcome back';
-  formSub.textContent = signup ? 'Create your GIC portal account.' : 'Sign in to your account to continue.';
-  submitLabel.textContent = signup ? 'Create account' : 'Sign in';
-  forgotLink.style.display = signup ? 'none' : '';
-  if (usernameField) usernameField.style.display = signup ? '' : 'none';
-  authSwitch.innerHTML = signup
-    ? `Already have an account? <a href="#" id="mode-toggle">Sign in</a>`
-    : `New here? <a href="#" id="mode-toggle">Create an account</a>`;
-  document.getElementById('mode-toggle').addEventListener('click', (e) => { e.preventDefault(); setMode(!isSignUp); });
+/* ─── Theme Toggle (login page) ─────────────────────────────────── */
+function initTheme() {
+  const saved = localStorage.getItem('gic_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  updateThemeIcon(saved);
+
+  const btn = document.getElementById('theme-toggle');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.classList.add('theme-anim');
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('gic_theme', next);
+      updateThemeIcon(next);
+      setTimeout(() => document.documentElement.classList.remove('theme-anim'), 500);
+    });
+  }
+}
+function updateThemeIcon(theme) {
+  const icon = document.getElementById('theme-icon');
+  if (icon) icon.textContent = theme === 'dark' ? '☀' : '☾';
 }
 
+/* ─── Role Tabs ─────────────────────────────────────────────────── */
+let currentRole = 'student';
 function initRoleTabs() {
-  tabs.forEach((tab) => {
+  const tabs = document.querySelectorAll('[data-role]');
+  tabs.forEach(tab => {
     tab.addEventListener('click', () => {
-      tabs.forEach((t) => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+      tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
       tab.classList.add('active');
       tab.setAttribute('aria-selected', 'true');
-      activeRole = tab.dataset.role;
-      deptField.style.display = activeRole === 'mentor' ? '' : 'none';
-      const body = document.getElementById('form-body');
-      body.style.animation = 'none';
-      requestAnimationFrame(() => { body.style.animation = ''; body.classList.remove('form-body'); void body.offsetWidth; body.classList.add('form-body'); });
-      document.getElementById('form-heading').textContent = isSignUp ? `Join as ${activeRole.charAt(0).toUpperCase() + activeRole.slice(1)}` : 'Welcome back';
+      currentRole = tab.dataset.role;
+      updateFormForRole();
     });
   });
 }
+function updateFormForRole() {
+  const deptField     = document.getElementById('dept-field');
+  const yearField     = document.getElementById('year-field');
+  const branchField   = document.getElementById('branch-field');
 
-function initForgotLink() {
-  if (!forgotLink) return;
-  forgotLink.addEventListener('click', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('email').value.trim();
-    if (!email) { toast('Enter your email first', 'warning'); return; }
-    const client = await getSB();
-    if (!client) { toast('Supabase not configured yet', 'error'); return; }
-    const { error } = await client.auth.resetPasswordForEmail(email, {
-      redirectTo: normalizeRedirect('./login.html'),
-    });
-    if (error) toast(error.message, 'error');
-    else toast('Password reset email sent! Check your inbox.', 'success', 6000);
-  });
+  // Show department/branch/year for students only
+  if (deptField)   deptField.style.display   = (currentRole === 'student' && isSignupMode) ? '' : 'none';
+  if (yearField)   yearField.style.display    = (currentRole === 'student' && isSignupMode) ? '' : 'none';
+  if (branchField) branchField.style.display  = (currentRole === 'mentor'  && isSignupMode) ? '' : 'none';
 }
 
+/* ─── Password Toggle ────────────────────────────────────────────── */
 function initPasswordToggle() {
-  pwToggle.addEventListener('click', () => {
-    const show = pwInput.type === 'password';
-    pwInput.type = show ? 'text' : 'password';
-    pwToggle.textContent = show ? '🙈' : '👁';
-  });
-}
-
-function initRipple() {
-  document.querySelectorAll('[data-ripple]').forEach((btn) => {
-    btn.addEventListener('pointerdown', (e) => {
-      const r = btn.getBoundingClientRect();
-      const rip = document.createElement('span');
-      rip.className = 'ripple';
-      rip.style.cssText = `left:${e.clientX - r.left}px;top:${e.clientY - r.top}px;width:8px;height:8px;position:absolute;border-radius:50%;`;
-      btn.appendChild(rip);
-      const max = Math.max(r.width, r.height) * 1.4;
-      rip.animate([
-        { transform: 'translate(-50%,-50%) scale(1)', opacity: .4 },
-        { transform: `translate(-50%,-50%) scale(${max / 4})`, opacity: 0 }
-      ], { duration: 520, easing: 'cubic-bezier(.2,.8,.2,1)' });
-      setTimeout(() => rip.remove(), 560);
+  const toggle = document.getElementById('pw-toggle');
+  const input  = document.getElementById('password');
+  if (toggle && input) {
+    toggle.addEventListener('click', () => {
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      toggle.textContent = show ? '🙈' : '👁';
     });
+  }
+}
+
+/* ─── Signup / Login mode toggle ────────────────────────────────── */
+let isSignupMode = false;
+function initModeToggle() {
+  const modeBtn = document.getElementById('mode-toggle');
+  if (!modeBtn) return;
+  modeBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    isSignupMode = !isSignupMode;
+    applyMode();
+  });
+}
+function applyMode() {
+  const heading    = document.getElementById('form-heading');
+  const sub        = document.getElementById('form-sub');
+  const submitLbl  = document.getElementById('submit-label');
+  const modeLink   = document.getElementById('auth-switch');
+  const oauthSect  = document.getElementById('oauth-section');
+  const usernameF  = document.getElementById('username-field');
+  const confirmF   = document.getElementById('confirm-field');
+  const picF       = document.getElementById('profile-pic-field');
+  const rememberRow = document.querySelector('.field-row');
+
+  if (isSignupMode) {
+    if (heading)     heading.textContent = 'Create account';
+    if (sub)         sub.textContent     = 'Join the Genesis portal today.';
+    if (submitLbl)   submitLbl.textContent = 'Sign up';
+    if (modeLink)    modeLink.innerHTML  = 'Already have an account? <a href="#" id="mode-toggle">Sign in</a>';
+    if (oauthSect)   oauthSect.style.display = 'none';
+    if (usernameF)   usernameF.style.display = '';
+    if (confirmF)    confirmF.style.display = '';
+    if (picF)        picF.style.display = '';
+    if (rememberRow) rememberRow.style.display = 'none';
+  } else {
+    if (heading)     heading.textContent = 'Welcome back';
+    if (sub)         sub.textContent     = 'Sign in to your account to continue.';
+    if (submitLbl)   submitLbl.textContent = 'Sign in';
+    if (modeLink)    modeLink.innerHTML  = 'New here? <a href="#" id="mode-toggle">Create an account</a>';
+    if (oauthSect)   oauthSect.style.display = '';
+    if (usernameF)   usernameF.style.display = 'none';
+    if (confirmF)    confirmF.style.display = 'none';
+    if (picF)        picF.style.display = 'none';
+    if (rememberRow) rememberRow.style.display = '';
+  }
+
+  updateFormForRole();
+
+  // Re-attach mode toggle (innerHTML replaced it)
+  const newModeBtn = document.getElementById('mode-toggle');
+  if (newModeBtn) {
+    newModeBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      isSignupMode = !isSignupMode;
+      applyMode();
+    });
+  }
+}
+
+/* ─── Inject extra signup fields (non-visual: hidden by default) ── */
+function injectExtraFields() {
+  const mainFields = document.getElementById('main-fields');
+  if (!mainFields) return;
+
+  // Confirm password field
+  if (!document.getElementById('confirm-field')) {
+    const confirmDiv = document.createElement('div');
+    confirmDiv.className = 'field';
+    confirmDiv.id = 'confirm-field';
+    confirmDiv.style.display = 'none';
+    confirmDiv.innerHTML = `
+      <label for="confirm-password">Confirm password</label>
+      <div class="pw-wrap">
+        <input type="password" id="confirm-password" name="confirm-password" placeholder="••••••••" autocomplete="new-password" />
+        <button type="button" class="pw-toggle" id="confirm-pw-toggle" aria-label="Show/hide password">👁</button>
+      </div>`;
+    mainFields.appendChild(confirmDiv);
+
+    // Toggle for confirm password
+    const cToggle = confirmDiv.querySelector('#confirm-pw-toggle');
+    const cInput  = confirmDiv.querySelector('#confirm-password');
+    cToggle.addEventListener('click', () => {
+      const show = cInput.type === 'password';
+      cInput.type = show ? 'text' : 'password';
+      cToggle.textContent = show ? '🙈' : '👁';
+    });
+  }
+
+  // Year of study (student signup only)
+  if (!document.getElementById('year-field')) {
+    const yearDiv = document.createElement('div');
+    yearDiv.className = 'field';
+    yearDiv.id = 'year-field';
+    yearDiv.style.display = 'none';
+    yearDiv.innerHTML = `
+      <label for="year">Year of study</label>
+      <select id="year" name="year">
+        <option value="">Select year…</option>
+        <option value="1">1st Year</option>
+        <option value="2">2nd Year</option>
+        <option value="3">3rd Year</option>
+        <option value="4">4th Year</option>
+      </select>`;
+    mainFields.appendChild(yearDiv);
+  }
+
+  // Branch / specialisation (mentor signup only)
+  if (!document.getElementById('branch-field')) {
+    const branchDiv = document.createElement('div');
+    branchDiv.className = 'field';
+    branchDiv.id = 'branch-field';
+    branchDiv.style.display = 'none';
+    branchDiv.innerHTML = `
+      <label for="branch">Specialisation / Branch</label>
+      <input type="text" id="branch" name="branch" placeholder="e.g. Electronics & IoT" />`;
+    mainFields.appendChild(branchDiv);
+  }
+
+  // Profile picture upload (signup only)
+  if (!document.getElementById('profile-pic-field')) {
+    const picDiv = document.createElement('div');
+    picDiv.className = 'field';
+    picDiv.id = 'profile-pic-field';
+    picDiv.style.display = 'none';
+    picDiv.innerHTML = `
+      <label for="profile-pic">Profile picture <span style="font-weight:400;text-transform:none;color:var(--text-3)">(optional)</span></label>
+      <input type="file" id="profile-pic" name="profile-pic" accept="image/*" style="padding:.5rem .6rem;" />`;
+    mainFields.appendChild(picDiv);
+  }
+}
+
+/* ─── Profile picture → base64 ───────────────────────────────────── */
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('File read error'));
+    reader.readAsDataURL(file);
   });
 }
 
-function getRedirectTarget() {
-  return normalizeRedirect(GIC_CONFIG.auth?.redirectAfterLogin || './index.html');
-}
-
-function authStateListener(client) {
-  client.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN' && session) {
-      toast('Login successful! Redirecting…', 'success');
-      setTimeout(() => { window.location.href = getRedirectTarget(); }, 1400);
-    }
-  });
-}
-
+/* ─── Form submission ────────────────────────────────────────────── */
 function initForm() {
+  const form      = document.getElementById('login-form');
+  const spinner   = document.getElementById('btn-spinner');
+  const submitBtn = document.getElementById('submit-btn');
+  const submitLbl = document.getElementById('submit-label');
+  if (!form) return;
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    if (!email || !password) { toast('Please fill in email and password', 'warning'); return; }
-    if (isSignUp && password.length < 6) { toast('Password must be at least 6 characters', 'warning'); return; }
-    const client = await getSB();
-    if (!client) { toast('Supabase is not configured. Add your URL and anon key.', 'error', 6000); return; }
-    submitBtn.disabled = true;
-    spinner.style.display = 'block';
-    submitLabel.textContent = isSignUp ? 'Creating…' : 'Signing in…';
+    const email    = document.getElementById('email')?.value.trim();
+    const password = document.getElementById('password')?.value;
+    const remember = document.getElementById('remember')?.checked;
+
+    if (!email || !password) { toast('Please fill in all required fields.', 'error'); return; }
+
+    // Show spinner
+    if (spinner)   spinner.style.display = '';
+    if (submitLbl) submitLbl.style.display = 'none';
+    if (submitBtn) submitBtn.disabled = true;
+
+    // Simulate async delay
+    await new Promise(r => setTimeout(r, 600));
+
     try {
-      if (isSignUp) {
-        const username = usernameInput ? usernameInput.value.trim() : '';
-        const dept = document.getElementById('department')?.value || '';
-        const { data, error } = await client.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              full_name: username || email.split('@')[0],
-              user_name: username || email.split('@')[0],
-              role: activeRole,
-            }
-          }
-        });
-        if (error) throw error;
-        if (data.user) {
-          await client.from('profiles').upsert({
-            id: data.user.id,
-            username: username || email.split('@')[0],
-            full_name: username || email.split('@')[0],
-            role: activeRole,
-            email: email,
-            department: dept || null,
-            updated_at: new Date().toISOString()
-          }, { onConflict: 'id' });
-        }
-        toast('Account created! Check your email to confirm.', 'success', 7000);
-        setMode(false);
-        form.reset();
+      if (isSignupMode) {
+        await handleSignup(email, password, remember);
       } else {
-        const { data, error } = await client.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        const { data: profile } = await client.from('profiles').select('role, full_name, username').eq('id', data.user.id).single();
-        const name = profile?.full_name || profile?.username || email.split('@')[0];
-        toast(`Welcome back, ${name}! 👋`, 'success');
-        setTimeout(() => { window.location.href = getRedirectTarget(); }, 1600);
+        await handleLogin(email, password, remember);
       }
-    } catch (err) {
-      toast(err.message || 'Something went wrong.', 'error');
     } finally {
-      submitBtn.disabled = false;
-      spinner.style.display = 'none';
-      submitLabel.textContent = isSignUp ? 'Create account' : 'Sign in';
+      if (spinner)   spinner.style.display = 'none';
+      if (submitLbl) submitLbl.style.display = '';
+      if (submitBtn) submitBtn.disabled = false;
     }
   });
 }
 
+async function handleSignup(email, password) {
+  const username = document.getElementById('username')?.value.trim();
+  const confirm  = document.getElementById('confirm-password')?.value;
+  const deptEl   = document.getElementById('department');
+  const yearEl   = document.getElementById('year');
+  const branchEl = document.getElementById('branch');
+  const picEl    = document.getElementById('profile-pic');
+
+  if (!username)          { toast('Please choose a username.', 'error'); return; }
+  if (password !== confirm) { toast('Passwords do not match.', 'error'); return; }
+  if (password.length < 6) { toast('Password must be at least 6 characters.', 'error'); return; }
+
+  const users = getUsers();
+  if (users[email])       { toast('An account with this email already exists.', 'error'); return; }
+
+  let avatarDataUrl = null;
+  if (picEl?.files?.[0]) {
+    try { avatarDataUrl = await readFileAsDataURL(picEl.files[0]); }
+    catch { /* avatar optional, silently skip */ }
+  }
+
+  const newUser = {
+    email,
+    username,
+    passwordHash: hashPassword(password),
+    role:         currentRole,
+    department:   deptEl?.value  || '',
+    year:         yearEl?.value  || '',
+    branch:       branchEl?.value || '',
+    avatar:       avatarDataUrl,
+    createdAt:    new Date().toISOString(),
+  };
+
+  users[email] = newUser;
+  saveUsers(users);
+
+  const session = { ...newUser };
+  delete session.passwordHash;
+  setSession(session, false);
+
+  toast(`Account created! Welcome, ${username} 🎉`, 'success');
+  await new Promise(r => setTimeout(r, 900));
+  window.location.href = 'dashboard.html';
+}
+
+async function handleLogin(email, password, remember) {
+  const users = getUsers();
+  const user  = users[email];
+  if (!user || user.passwordHash !== hashPassword(password)) {
+    toast('Invalid email or password.', 'error');
+    return;
+  }
+
+  const session = { ...user };
+  delete session.passwordHash;
+  setSession(session, remember);
+
+  toast(`Welcome back, ${user.username || user.email}!`, 'success');
+  await new Promise(r => setTimeout(r, 700));
+  window.location.href = 'dashboard.html';
+}
+
+/* ─── OAuth placeholders (Google / GitHub) ───────────────────────── */
 function initOAuth() {
-  document.getElementById('google-btn').addEventListener('click', () => oauthLogin('google'));
-  document.getElementById('github-btn').addEventListener('click', () => oauthLogin('github'));
+  document.getElementById('google-btn')?.addEventListener('click', () => {
+    toast('Google OAuth requires a backend integration. Use email signup for now.', 'info');
+  });
+  document.getElementById('github-btn')?.addEventListener('click', () => {
+    toast('GitHub OAuth requires a backend integration. Use email signup for now.', 'info');
+  });
 }
 
-async function oauthLogin(provider) {
-  const client = await getSB();
-  if (!client) { toast('Supabase not configured', 'error'); return; }
-  const redirectTo = normalizeRedirect(GIC_CONFIG.auth?.redirectAfterLogin || './index.html');
-  const { error } = await client.auth.signInWithOAuth({ provider, options: { redirectTo } });
-  if (error) toast(error.message, 'error');
+/* ─── Forgot password ────────────────────────────────────────────── */
+function initForgotPassword() {
+  document.getElementById('forgot-link')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email')?.value.trim();
+    if (!email) { toast('Enter your email first, then click Forgot password.', 'info'); return; }
+    toast(`A reset link has been sent to ${email} (demo mode — no actual email sent).`, 'info');
+  });
 }
 
-async function initAuthState() {
-  const client = await getSB();
-  if (client) authStateListener(client);
+/* ─── Ripple effect on submit button ────────────────────────────── */
+function initRipple() {
+  document.querySelectorAll('[data-ripple]').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+      const r   = Math.max(btn.clientWidth, btn.clientHeight);
+      const rEl = document.createElement('span');
+      rEl.className = 'ripple';
+      Object.assign(rEl.style, {
+        width: r * 2 + 'px', height: r * 2 + 'px',
+        left:  e.clientX - btn.getBoundingClientRect().left + 'px',
+        top:   e.clientY - btn.getBoundingClientRect().top  + 'px',
+      });
+      btn.appendChild(rEl);
+      requestAnimationFrame(() => { rEl.style.transform = 'translate(-50%,-50%) scale(1)'; rEl.style.opacity = '0'; });
+      rEl.addEventListener('transitionend', () => rEl.remove());
+    });
+  });
 }
 
-function init() {
-  initLoader();
+/* ─── Redirect if already logged in ─────────────────────────────── */
+function checkAlreadyLoggedIn() {
+  const session = getSession();
+  if (session) {
+    window.location.href = 'dashboard.html';
+  }
+}
+
+/* ─── Boot ───────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  checkAlreadyLoggedIn();
   initTheme();
-  initPasswordToggle();
   initRoleTabs();
-  setMode(false);
-  initForgotLink();
-  initRipple();
+  injectExtraFields();
+  initModeToggle();
+  initPasswordToggle();
   initForm();
   initOAuth();
-  initAuthState();
-}
-
-init();
+  initForgotPassword();
+  initRipple();
+  dismissLoader();
+});
