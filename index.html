@@ -1,403 +1,411 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="color-scheme" content="dark light" />
-  <meta name="theme-color" content="#000000" />
-  <meta name="description"
-    content="Genesis Incubation Centre — institutional innovation hub at Genesis Engineering College." />
-  <title>Genesis Incubation Centre</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Sans+3:wght@400;500;600;700&display=swap"
-    rel="stylesheet" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="dark light" />
+<meta name="theme-color" content="#000000" />
+<meta name="description"
+  content="Genesis Incubation Centre — institutional innovation hub at Genesis Engineering College." />
+<title>Genesis Incubation Centre</title>
+<link rel="stylesheet" href="styles.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Sans+3:wght@400;500;600;700&display=swap"
+  rel="stylesheet" />
 </head>
-
 <body>
-  <a class="skip" href="#main">Skip to content</a>
+<a class="skip" href="#main">Skip to content</a>
+<header class="header" data-header>
+  <div class="header-bar">
+    <a class="header-brand" href="#home">
+      <img src="https://cdn.imageurlgenerator.com/uploads/7a3264f2-9a1f-4fe7-a124-da445f285aab.png" width="220"
+        height="52" alt="Gyan Ganga Genesis Incubation Centre" />
+    </a>
+    <div class="header-actions">
+      <!-- Login link — JS will swap text/href if session exists -->
+      <a class="header-login" id="header-login-link" href="./login.html">Login</a>
+      <button class="header-menu" type="button" data-nav-open aria-expanded="false" aria-controls="site-nav">
+        <span class="header-menu-text">Menu</span>
+        <span class="header-menu-bars" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </div>
+  </div>
+</header>
 
-  <header class="header" data-header>
-    <div class="header-bar">
-      <a class="header-brand" href="#home">
-        <img src="https://cdn.imageurlgenerator.com/uploads/7a3264f2-9a1f-4fe7-a124-da445f285aab.png" width="220"
-          height="52" alt="Gyan Ganga Genesis Incubation Centre" />
-      </a>
-      <div class="header-actions">
-        <a class="header-login" href="./login.html">Login</a>
-        <button class="header-menu" type="button" data-nav-open aria-expanded="false" aria-controls="site-nav">
-          <span class="header-menu-text">Menu</span>
-          <span class="header-menu-bars" aria-hidden="true"><i></i><i></i></span>
+<div class="nav-shell" id="site-nav" data-nav-shell aria-hidden="true">
+  <div class="nav-scrim" data-nav-close></div>
+  <aside class="nav-panel" role="dialog" aria-modal="true" aria-label="Navigation">
+    <div class="nav-panel-top">
+      <span class="nav-panel-label">Navigation</span>
+      <button class="nav-panel-close" type="button" data-nav-close aria-label="Close">Close</button>
+    </div>
+    <nav class="nav-index">
+      <a href="#home"     data-nav-link><span class="nav-num">00</span><span>Home</span></a>
+      <a href="#about"    data-nav-link><span class="nav-num">01</span><span>About</span></a>
+      <a href="#programs" data-nav-link><span class="nav-num">02</span><span>Programs</span></a>
+      <a href="#process"  data-nav-link><span class="nav-num">03</span><span>How it works</span></a>
+      <a href="#projects" data-nav-link><span class="nav-num">04</span><span>Projects</span></a>
+      <a href="#events"   data-nav-link><span class="nav-num">05</span><span>Events</span></a>
+      <a href="#mentors"  data-nav-link><span class="nav-num">06</span><span>Mentors</span></a>
+      <a href="#gallery"  data-nav-link><span class="nav-num">07</span><span>Gallery</span></a>
+      <!-- Nav login link — also updated by JS -->
+      <a href="./login.html" id="nav-login-link"><span class="nav-num">08</span><span id="nav-login-text">Login</span></a>
+      <a href="#contact"  data-nav-link><span class="nav-num">09</span><span>Contact</span></a>
+    </nav>
+    <div class="nav-panel-bottom">
+      <div class="theme-control">
+        <div>
+          <div class="theme-control-title">Appearance</div>
+          <div class="theme-control-hint">Dark / Light</div>
+        </div>
+        <button type="button" class="theme-btn" data-theme-toggle aria-label="Toggle theme">
+          <span class="theme-btn-track"><span class="theme-btn-knob"></span></span>
+          <span data-theme-label>Dark</span>
         </button>
       </div>
+      <a class="nav-panel-cta" href="#contact" data-nav-link>Apply for support</a>
     </div>
-  </header>
+  </aside>
+</div>
 
-  <div class="nav-shell" id="site-nav" data-nav-shell aria-hidden="true">
-    <div class="nav-scrim" data-nav-close></div>
-    <aside class="nav-panel" role="dialog" aria-modal="true" aria-label="Navigation">
-      <div class="nav-panel-top">
-        <span class="nav-panel-label">Navigation</span>
-        <button class="nav-panel-close" type="button" data-nav-close aria-label="Close">Close</button>
-      </div>
-      <nav class="nav-index">
-        <a href="#home" data-nav-link><span class="nav-num">00</span><span>Home</span></a>
-        <a href="#about" data-nav-link><span class="nav-num">01</span><span>About</span></a>
-        <a href="#programs" data-nav-link><span class="nav-num">02</span><span>Programs</span></a>
-        <a href="#process" data-nav-link><span class="nav-num">03</span><span>How it works</span></a>
-        <a href="#projects" data-nav-link><span class="nav-num">04</span><span>Projects</span></a>
-        <a href="#events" data-nav-link><span class="nav-num">05</span><span>Events</span></a>
-        <a href="#mentors" data-nav-link><span class="nav-num">06</span><span>Mentors</span></a>
-        <a href="#gallery" data-nav-link><span class="nav-num">07</span><span>Gallery</span></a>
-        <a href="./login.html"><span class="nav-num">08</span><span>Login</span></a>
-        <a href="#contact" data-nav-link><span class="nav-num">09</span><span>Contact</span></a>
-      </nav>
-      <div class="nav-panel-bottom">
-        <div class="theme-control">
-          <div>
-            <div class="theme-control-title">Appearance</div>
-            <div class="theme-control-hint">Dark / Light</div>
-          </div>
-          <button type="button" class="theme-btn" data-theme-toggle aria-label="Toggle theme">
-            <span class="theme-btn-track"><span class="theme-btn-knob"></span></span>
-            <span data-theme-label>Dark</span>
-          </button>
+<main id="main">
+  <section id="home" class="hero">
+    <div class="hero-media" aria-hidden="true">
+      <img src="https://cdn.imageurlgenerator.com/uploads/a70228c7-0c04-497e-af8b-baceb8368a0e.jpeg" alt=""
+        data-parallax-img />
+      <div class="hero-media-shade"></div>
+    </div>
+    <div class="wrap hero-grid">
+      <div class="hero-copy" data-reveal-group>
+        <p class="eyebrow reveal-item">Genesis Incubation Centre · GEC</p>
+        <h1 class="hero-title reveal-item">
+          Where student work<br />
+          earns its proof.
+        </h1>
+        <p class="hero-desc reveal-item">
+          GIC is the college's incubation arm — structured reviews, lab access, and mentor time for teams building
+          prototypes that stand up to scrutiny.
+        </p>
+        <div class="hero-actions reveal-item">
+          <a class="btn btn-red" href="#programs">View programs</a>
+          <a class="btn btn-line" href="#contact">Submit a project</a>
         </div>
-        <a class="nav-panel-cta" href="#contact" data-nav-link>Apply for support</a>
       </div>
-    </aside>
-  </div>
+      <aside class="hero-aside" data-reveal>
+        <div class="hero-ring" aria-hidden="true">
+          <span class="ring ring-outer"></span>
+          <span class="ring ring-mid"></span>
+          <span class="ring ring-core"></span>
+        </div>
+        <dl class="hero-metrics">
+          <div>
+            <dt>Teams in cycle</dt>
+            <dd><span data-counter data-to="24">0</span></dd>
+          </div>
+          <div>
+            <dt>Mentor hours / month</dt>
+            <dd><span data-counter data-to="140">0</span></dd>
+          </div>
+          <div>
+            <dt>Pilots underway</dt>
+            <dd><span data-counter data-to="8">0</span></dd>
+          </div>
+        </dl>
+      </aside>
+    </div>
+    <div class="hero-foot wrap">
+      <span class="hero-foot-label">Scroll</span>
+      <span class="hero-foot-line" aria-hidden="true"></span>
+    </div>
+  </section>
 
-  <main id="main">
-    <section id="home" class="hero">
-      <div class="hero-media" aria-hidden="true">
-        <img src="https://cdn.imageurlgenerator.com/uploads/a70228c7-0c04-497e-af8b-baceb8368a0e.jpeg" alt=""
-          data-parallax-img />
-        <div class="hero-media-shade"></div>
-      </div>
-
-      <div class="wrap hero-grid">
-        <div class="hero-copy" data-reveal-group>
-          <p class="eyebrow reveal-item">Genesis Incubation Centre · GEC</p>
-          <h1 class="hero-title reveal-item">
-            Where student work<br />
-            earns its proof.
-          </h1>
-          <p class="hero-desc reveal-item">
-            GIC is the college’s incubation arm — structured reviews, lab access, and mentor time for teams building
-            prototypes that stand up to scrutiny.
+  <section id="about" class="section">
+    <div class="wrap about-layout">
+      <header class="section-head" data-reveal>
+        <span class="section-num">01</span>
+        <h2 class="h2">About Genesis</h2>
+      </header>
+      <div class="about-body">
+        <div class="about-lead" data-reveal>
+          <p class="pull">
+            We exist to raise the standard of student innovation — not to chase hype, but to help teams document
+            decisions, test assumptions, and present work the way an institution should.
           </p>
-          <div class="hero-actions reveal-item">
-            <a class="btn btn-red" href="#programs">View programs</a>
-            <a class="btn btn-line" href="#contact">Submit a project</a>
-          </div>
         </div>
-
-        <aside class="hero-aside" data-reveal>
-          <div class="hero-ring" aria-hidden="true">
-            <span class="ring ring-outer"></span>
-            <span class="ring ring-mid"></span>
-            <span class="ring ring-core"></span>
-          </div>
-          <dl class="hero-metrics">
-            <div>
-              <dt>Teams in cycle</dt>
-              <dd><span data-counter data-to="24">0</span></dd>
-            </div>
-            <div>
-              <dt>Mentor hours / month</dt>
-              <dd><span data-counter data-to="140">0</span></dd>
-            </div>
-            <div>
-              <dt>Pilots underway</dt>
-              <dd><span data-counter data-to="8">0</span></dd>
-            </div>
-          </dl>
-        </aside>
-      </div>
-
-      <div class="hero-foot wrap">
-        <span class="hero-foot-label">Scroll</span>
-        <span class="hero-foot-line" aria-hidden="true"></span>
-      </div>
-    </section>
-
-    <section id="about" class="section">
-      <div class="wrap about-layout">
-        <header class="section-head" data-reveal>
-          <span class="section-num">01</span>
-          <h2 class="h2">About Genesis</h2>
-        </header>
-        <div class="about-body">
-          <div class="about-lead" data-reveal>
-            <p class="pull">
-              We exist to raise the standard of student innovation — not to chase hype, but to help teams document
-              decisions, test assumptions, and present work the way an institution should.
-            </p>
-          </div>
-          <div class="about-cols" data-reveal>
-            <p>
-              Genesis Incubation Centre sits inside Genesis Engineering College as a governed pathway from coursework
-              and club activity into serious build cycles. Faculty reviewers, lab coordinators, and external mentors
-              share one rhythm: brief clearly, ship in small steps, measure outcomes.
-            </p>
-            <p>
-              Whether the project is hardware, software, or a hybrid service, the expectation is the same — evidence
-              over slides, iteration over announcement, and respect for safety, ethics, and IP from day one.
-            </p>
-          </div>
-          <ul class="about-facts" data-reveal>
-            <li><strong>6</strong><span>structured program tracks</span></li>
-            <li><strong>12+</strong><span>faculty & industry mentors</span></li>
-            <li><strong>3</strong><span>review tiers before pilot</span></li>
-          </ul>
+        <div class="about-cols" data-reveal>
+          <p>
+            Genesis Incubation Centre sits inside Genesis Engineering College as a governed pathway from coursework
+            and club activity into serious build cycles. Faculty reviewers, lab coordinators, and external mentors
+            share one rhythm: brief clearly, ship in small steps, measure outcomes.
+          </p>
+          <p>
+            Whether the project is hardware, software, or a hybrid service, the expectation is the same — evidence
+            over slides, iteration over announcement, and respect for safety, ethics, and IP from day one.
+          </p>
         </div>
+        <ul class="about-facts" data-reveal>
+          <li><strong>6</strong><span>structured program tracks</span></li>
+          <li><strong>12+</strong><span>faculty & industry mentors</span></li>
+          <li><strong>3</strong><span>review tiers before pilot</span></li>
+        </ul>
       </div>
-    </section>
-
-
-
-    <section id="process" class="section process-section" data-process>
-      <div class="wrap">
-        <header class="section-head" data-reveal>
-          <span class="section-num">02</span>
-          <h2 class="h2">How work moves through GIC</h2>
-        </header>
-      </div>
-
-      <div class="process-track" data-process-track>
-        <article class="process-card is-active" data-process-step="0">
-          <span class="process-step">Step 01</span>
-          <h3>Brief & align</h3>
-          <p>Problem statement, constraints, success metrics — signed off before build hours are allocated.</p>
-        </article>
-        <article class="process-card" data-process-step="1">
-          <span class="process-step">Step 02</span>
-          <h3>Build & test</h3>
-          <p>Small releases, lab validation, and a running log — every change tied to a hypothesis.</p>
-        </article>
-        <article class="process-card" data-process-step="2">
-          <span class="process-step">Step 03</span>
-          <h3>Review</h3>
-          <p>Studio session with faculty and mentors. Feedback becomes a checklist, not a compliment.</p>
-        </article>
-        <article class="process-card" data-process-step="3">
-          <span class="process-step">Step 04</span>
-          <h3>Pilot</h3>
-          <p>Partner site or campus trial with tracked outcomes — then the next iteration cycle.</p>
-        </article>
-      </div>
-
-      <div class="process-indicator wrap" aria-hidden="true">
-        <div class="process-bar"><span data-process-bar></span></div>
-        <span class="process-label" data-process-label>Brief & align</span>
-      </div>
-    </section>
-
-    <section id="projects" class="section">
-      <div class="wrap">
-        <header class="section-head section-head-row" data-reveal>
-          <div>
-            <span class="section-num">04</span>
-            <h2 class="h2">Projects</h2>
-          </div>
-          <p class="section-note">Selected work from recent cycles.</p>
-        </header>
-      </div>
-
-      <div class="project-detail wrap">
-        <span class="project-cat">IoT · Agriculture</span>
-        <h3>AgriSense Lab Kit</h3>
-        <p>Low-cost irrigation sensing for small plots — designed for maintainability in field conditions.</p>
-        <span class="project-status">Pilot planning · 2026</span>
-      </div>
-      </article>
-
-      <article class="project-block project-block-flip" data-reveal>
-        <div class="project-visual">
-          <div class="project-visual-bg project-bg-2" role="img" aria-label="Campus mobility interface"></div>
-        </div>
-        <div class="project-detail wrap">
-          <span class="project-cat">UX · Accessibility</span>
-          <h3>Campus Mobility Map</h3>
-          <p>Route planning for visitors and accessible paths — tested with real campus flows.</p>
-          <span class="project-status">Prototype · Review passed</span>
-        </div>
-      </article>
-
-      <article class="project-block" data-reveal>
-        <div class="project-visual">
-          <div class="project-visual-bg project-bg-3" role="img" aria-label="HygieneCare hardware"></div>
-        </div>
-        <div class="project-detail wrap">
-          <span class="project-cat">Hardware · Public health</span>
-          <h3>HygieneCare Micro-Unit</h3>
-          <p>Compact sanitation module for schools — emphasis on serviceability and measured water use.</p>
-          <span class="project-status">Lab testing</span>
-        </div>
-      </article>
-      </div>
-    </section>
-
-    <section id="events" class="section section-alt">
-      <div class="wrap events-layout">
-        <header class="section-head" data-reveal>
-          <span class="section-num">05</span>
-          <h2 class="h2">Events</h2>
-        </header>
-
-        <div class="events-table" data-reveal>
-          <div class="events-row events-row-head">
-            <span>Date</span><span>Session</span><span>Format</span>
-          </div>
-          <div class="events-row">
-            <time datetime="2026-06-24">24 Jun 2026</time>
-            <span>Build-to-Demo Challenge</span>
-            <span>Teams · Demo day</span>
-          </div>
-          <div class="events-row">
-            <time datetime="2026-07-12">12 Jul 2026</time>
-            <span>Mentor Connect — Product & Engineering</span>
-            <span>Booked slots</span>
-          </div>
-          <div class="events-row">
-            <time datetime="2026-08-05">05 Aug 2026</time>
-            <span>Demo Storytelling Workshop</span>
-            <span>Hands-on · Deliverable</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="mentors" class="section">
-      <div class="wrap">
-        <header class="section-head" data-reveal>
-          <span class="section-num">06</span>
-          <h2 class="h2">Mentors & leadership</h2>
-        </header>
-
-        <div class="mentor-grid">
-          <article class="mentor-card" data-reveal>
-            <div class="mentor-avatar mentor-av-1" aria-hidden="true"></div>
-            <div class="mentor-info">
-              <h3>Prof. Asha Rao</h3>
-              <p class="mentor-role">Faculty lead · Computer Science</p>
-              <p class="mentor-bio">Engineering quality, documentation, and iteration discipline in software-heavy
-                teams.</p>
-            </div>
-          </article>
-          <article class="mentor-card" data-reveal>
-            <div class="mentor-avatar mentor-av-2" aria-hidden="true"></div>
-            <div class="mentor-info">
-              <h3>Dr. Vikram Singh</h3>
-              <p class="mentor-role">Programs · Electronics & Systems</p>
-              <p class="mentor-bio">Prototype planning, safety reviews, and systems thinking for hardware pilots.</p>
-            </div>
-          </article>
-          <article class="mentor-card" data-reveal>
-            <div class="mentor-avatar mentor-av-3" aria-hidden="true"></div>
-            <div class="mentor-info">
-              <h3>Rekha Patel</h3>
-              <p class="mentor-role">Industry mentor · Partnerships</p>
-              <p class="mentor-bio">Partner alignment, outcome tracking, and clear communication with external sites.
-              </p>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="gallery" class="section section-gallery">
-      <div class="wrap">
-        <header class="section-head section-head-row" data-reveal>
-          <div>
-            <span class="section-num">07</span>
-            <h2 class="h2">Gallery</h2>
-          </div>
-          <p class="section-note">Studio floor, reviews, and build nights.</p>
-        </header>
-      </div>
-
-      <div class="gallery-masonry" data-reveal>
-        <figure class="g-cell g-tall">
-          <div class="g-img g-img-1"></div>
-          <figcaption>Review board</figcaption>
-        </figure>
-        <figure class="g-cell">
-          <div class="g-img g-img-2"></div>
-          <figcaption>Prototype bench</figcaption>
-        </figure>
-        <figure class="g-cell g-wide">
-          <div class="g-img g-img-3"></div>
-          <figcaption>Cross-team sprint</figcaption>
-        </figure>
-        <figure class="g-cell">
-          <div class="g-img g-img-4"></div>
-          <figcaption>Mentor session</figcaption>
-        </figure>
-        <figure class="g-cell g-tall">
-          <div class="g-img g-img-5"></div>
-          <figcaption>Demo prep</figcaption>
-        </figure>
-        <figure class="g-cell">
-          <div class="g-img g-img-6"></div>
-          <figcaption>Testing corner</figcaption>
-        </figure>
-      </div>
-    </section>
-
-
-
-    <section id="contact" class="section">
-      <div class="wrap contact-wrap">
-        <header class="section-head" data-reveal>
-          <span class="section-num">08</span>
-          <h2 class="h2">Contact</h2>
-        </header>
-
-        <div class="contact-grid" data-reveal>
-          <div class="contact-copy">
-            <p class="pull">Tell us what you are building and what you need to prove in the next six weeks.</p>
-            <address>
-              <span>gic@genesis.edu.in</span>
-              <span>Genesis</span>
-              <span>Campus Road · City, State</span>
-            </address>
-          </div>
-
-          <form class="contact-form" data-contact-form novalidate>
-            <div class="field-pair">
-              <label class="field"><span>Name</span><input type="text" name="name" required /></label>
-              <label class="field"><span>Department</span><input type="text" name="department" required /></label>
-            </div>
-            <label class="field"><span>Project summary</span><textarea name="message" rows="4"
-                required></textarea></label>
-            <button type="submit" class="btn btn-red btn-full" data-contact-submit>Send interest</button>
-            <div class="contact-msg" data-contact-msg aria-live="polite"></div>
-          </form>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="wrap footer-grid">
-      <img class="footer-logo" src="https://cdn.imageurlgenerator.com/uploads/7a3264f2-9a1f-4fe7-a124-da445f285aab.png"
-        width="180" height="44" alt="Genesis Incubation Centre" />
-      <nav class="footer-links" aria-label="Footer">
-        <a href="#about">About</a>
-        <a href="#programs">Programs</a>
-        <a href="#projects">Projects</a>
-        <a href="./login.html">Login</a>
-      </nav>
-      <p class="footer-copy">© <span data-year></span> Genesis Incubation Centre · Genesis Engineering College</p>
     </div>
-  </footer>
+  </section>
 
-  <script src="app.js" type="module" defer></script>
+  <section id="process" class="section process-section" data-process>
+    <div class="wrap">
+      <header class="section-head" data-reveal>
+        <span class="section-num">02</span>
+        <h2 class="h2">How work moves through GIC</h2>
+      </header>
+    </div>
+    <div class="process-track" data-process-track>
+      <article class="process-card is-active" data-process-step="0">
+        <span class="process-step">Step 01</span>
+        <h3>Brief & align</h3>
+        <p>Problem statement, constraints, success metrics — signed off before build hours are allocated.</p>
+      </article>
+      <article class="process-card" data-process-step="1">
+        <span class="process-step">Step 02</span>
+        <h3>Build & test</h3>
+        <p>Small releases, lab validation, and a running log — every change tied to a hypothesis.</p>
+      </article>
+      <article class="process-card" data-process-step="2">
+        <span class="process-step">Step 03</span>
+        <h3>Review</h3>
+        <p>Studio session with faculty and mentors. Feedback becomes a checklist, not a compliment.</p>
+      </article>
+      <article class="process-card" data-process-step="3">
+        <span class="process-step">Step 04</span>
+        <h3>Pilot</h3>
+        <p>Partner site or campus trial with tracked outcomes — then the next iteration cycle.</p>
+      </article>
+    </div>
+    <div class="process-indicator wrap" aria-hidden="true">
+      <div class="process-bar"><span data-process-bar></span></div>
+      <span class="process-label" data-process-label>Brief & align</span>
+    </div>
+  </section>
+
+  <section id="projects" class="section">
+    <div class="wrap">
+      <header class="section-head section-head-row" data-reveal>
+        <div>
+          <span class="section-num">04</span>
+          <h2 class="h2">Projects</h2>
+        </div>
+        <p class="section-note">Selected work from recent cycles.</p>
+      </header>
+    </div>
+    <div class="project-detail wrap">
+      <span class="project-cat">IoT · Agriculture</span>
+      <h3>AgriSense Lab Kit</h3>
+      <p>Low-cost irrigation sensing for small plots — designed for maintainability in field conditions.</p>
+      <span class="project-status">Pilot planning · 2026</span>
+    </div>
+    </article>
+    <article class="project-block project-block-flip" data-reveal>
+      <div class="project-visual">
+        <div class="project-visual-bg project-bg-2" role="img" aria-label="Campus mobility interface"></div>
+      </div>
+      <div class="project-detail wrap">
+        <span class="project-cat">UX · Accessibility</span>
+        <h3>Campus Mobility Map</h3>
+        <p>Route planning for visitors and accessible paths — tested with real campus flows.</p>
+        <span class="project-status">Prototype · Review passed</span>
+      </div>
+    </article>
+    <article class="project-block" data-reveal>
+      <div class="project-visual">
+        <div class="project-visual-bg project-bg-3" role="img" aria-label="HygieneCare hardware"></div>
+      </div>
+      <div class="project-detail wrap">
+        <span class="project-cat">Hardware · Public health</span>
+        <h3>HygieneCare Micro-Unit</h3>
+        <p>Compact sanitation module for schools — emphasis on serviceability and measured water use.</p>
+        <span class="project-status">Lab testing</span>
+      </div>
+    </article>
+    </div>
+  </section>
+
+  <section id="events" class="section section-alt">
+    <div class="wrap events-layout">
+      <header class="section-head" data-reveal>
+        <span class="section-num">05</span>
+        <h2 class="h2">Events</h2>
+      </header>
+      <div class="events-table" data-reveal>
+        <div class="events-row events-row-head">
+          <span>Date</span><span>Session</span><span>Format</span>
+        </div>
+        <div class="events-row">
+          <time datetime="2026-06-24">24 Jun 2026</time>
+          <span>Build-to-Demo Challenge</span>
+          <span>Teams · Demo day</span>
+        </div>
+        <div class="events-row">
+          <time datetime="2026-07-12">12 Jul 2026</time>
+          <span>Mentor Connect — Product & Engineering</span>
+          <span>Booked slots</span>
+        </div>
+        <div class="events-row">
+          <time datetime="2026-08-05">05 Aug 2026</time>
+          <span>Demo Storytelling Workshop</span>
+          <span>Hands-on · Deliverable</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="mentors" class="section">
+    <div class="wrap">
+      <header class="section-head" data-reveal>
+        <span class="section-num">06</span>
+        <h2 class="h2">Mentors & leadership</h2>
+      </header>
+      <div class="mentor-grid">
+        <article class="mentor-card" data-reveal>
+          <div class="mentor-avatar mentor-av-1" aria-hidden="true"></div>
+          <div class="mentor-info">
+            <h3>Prof. Asha Rao</h3>
+            <p class="mentor-role">Faculty lead · Computer Science</p>
+            <p class="mentor-bio">Engineering quality, documentation, and iteration discipline in software-heavy teams.</p>
+          </div>
+        </article>
+        <article class="mentor-card" data-reveal>
+          <div class="mentor-avatar mentor-av-2" aria-hidden="true"></div>
+          <div class="mentor-info">
+            <h3>Dr. Vikram Singh</h3>
+            <p class="mentor-role">Programs · Electronics & Systems</p>
+            <p class="mentor-bio">Prototype planning, safety reviews, and systems thinking for hardware pilots.</p>
+          </div>
+        </article>
+        <article class="mentor-card" data-reveal>
+          <div class="mentor-avatar mentor-av-3" aria-hidden="true"></div>
+          <div class="mentor-info">
+            <h3>Rekha Patel</h3>
+            <p class="mentor-role">Industry mentor · Partnerships</p>
+            <p class="mentor-bio">Partner alignment, outcome tracking, and clear communication with external sites.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="gallery" class="section section-gallery">
+    <div class="wrap">
+      <header class="section-head section-head-row" data-reveal>
+        <div>
+          <span class="section-num">07</span>
+          <h2 class="h2">Gallery</h2>
+        </div>
+        <p class="section-note">Studio floor, reviews, and build nights.</p>
+      </header>
+    </div>
+    <div class="gallery-masonry" data-reveal>
+      <figure class="g-cell g-tall">
+        <div class="g-img g-img-1"></div>
+        <figcaption>Review board</figcaption>
+      </figure>
+      <figure class="g-cell">
+        <div class="g-img g-img-2"></div>
+        <figcaption>Prototype bench</figcaption>
+      </figure>
+      <figure class="g-cell g-wide">
+        <div class="g-img g-img-3"></div>
+        <figcaption>Cross-team sprint</figcaption>
+      </figure>
+      <figure class="g-cell">
+        <div class="g-img g-img-4"></div>
+        <figcaption>Mentor session</figcaption>
+      </figure>
+      <figure class="g-cell g-tall">
+        <div class="g-img g-img-5"></div>
+        <figcaption>Demo prep</figcaption>
+      </figure>
+      <figure class="g-cell">
+        <div class="g-img g-img-6"></div>
+        <figcaption>Testing corner</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="contact" class="section">
+    <div class="wrap contact-wrap">
+      <header class="section-head" data-reveal>
+        <span class="section-num">08</span>
+        <h2 class="h2">Contact</h2>
+      </header>
+      <div class="contact-grid" data-reveal>
+        <div class="contact-copy">
+          <p class="pull">Tell us what you are building and what you need to prove in the next six weeks.</p>
+          <address>
+            <span>gic@genesis.edu.in</span>
+            <span>Genesis</span>
+            <span>Campus Road · City, State</span>
+            <!-- Clickable phone number -->
+            <span><a href="tel:+911234567890" style="color:inherit;text-decoration:none;">+91 12345 67890</a></span>
+          </address>
+        </div>
+        <form class="contact-form" data-contact-form novalidate>
+          <div class="field-pair">
+            <label class="field"><span>Name</span><input type="text" name="name" required /></label>
+            <label class="field"><span>Department</span><input type="text" name="department" required /></label>
+          </div>
+          <label class="field"><span>Project summary</span><textarea name="message" rows="4"
+            required></textarea></label>
+          <button type="submit" class="btn btn-red btn-full" data-contact-submit>Send interest</button>
+          <div class="contact-msg" data-contact-msg aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-grid">
+    <img class="footer-logo" src="https://cdn.imageurlgenerator.com/uploads/7a3264f2-9a1f-4fe7-a124-da445f285aab.png"
+      width="180" height="44" alt="Genesis Incubation Centre" />
+    <nav class="footer-links" aria-label="Footer">
+      <a href="#about">About</a>
+      <a href="#programs">Programs</a>
+      <a href="#projects">Projects</a>
+      <a href="./login.html" id="footer-login-link">Login</a>
+    </nav>
+    <p class="footer-copy">© <span data-year></span> Genesis Incubation Centre · Genesis Engineering College</p>
+  </div>
+</footer>
+
+<script src="app.js" type="module" defer></script>
+
+<!-- Session-aware header link swap — purely functional, zero visual change -->
+<script>
+(function() {
+  const SESSION_KEY = 'gic_session';
+  function getSession() {
+    try {
+      return JSON.parse(sessionStorage.getItem(SESSION_KEY)) ||
+             JSON.parse(localStorage.getItem(SESSION_KEY));
+    } catch { return null; }
+  }
+  const session = getSession();
+  if (session) {
+    // Header Login → Dashboard
+    const headerLink = document.getElementById('header-login-link');
+    if (headerLink) { headerLink.textContent = 'Dashboard'; headerLink.href = 'dashboard.html'; }
+    // Nav Login → Dashboard
+    const navLink  = document.getElementById('nav-login-link');
+    const navText  = document.getElementById('nav-login-text');
+    if (navLink)  navLink.href = 'dashboard.html';
+    if (navText)  navText.textContent = 'Dashboard';
+    // Footer Login → Dashboard
+    const footerLink = document.getElementById('footer-login-link');
+    if (footerLink) { footerLink.textContent = 'Dashboard'; footerLink.href = 'dashboard.html'; }
+  }
+})();
+</script>
 </body>
-
 </html>
