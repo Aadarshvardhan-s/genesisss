@@ -150,7 +150,6 @@
 <script type="module">
 import GICAuth from './auth-global.js';
 import supabase from './supabase-config.js';
-await GICAuth.ready;
 function getSession() {
   const c = GICAuth.getSessionSync();
   if (c && c.profile) return c.profile;
