@@ -485,9 +485,6 @@
 import GICAuth from './auth-global.js';
 import supabase from './supabase-config.js';
 
-// Wait for auth module to initialise and provide a session
-await GICAuth.ready;
-
 async function getSession() {
   const g = await GICAuth.getSession();
   
