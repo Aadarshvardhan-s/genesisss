@@ -1,0 +1,29 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Supabase Diagnostic</title></head><body>
+<h2>Supabase REST diagnostic</h2>
+<pre id="out">Running...</pre>
+<script type="module">
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from './supabase-config.js';
+const out = document.getElementById('out');
+function log(...args) { out.textContent += '\n' + args.map(a=>typeof a==='object'?JSON.stringify(a,null,2):String(a)).join(' '); }
+(async function(){
+  try {
+    const url = SUPABASE_URL + '/rest/v1/profiles?select=*&limit=1';
+    log('Request URL:', url);
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Accept': 'application/json'
+      }
+    });
+    log('Status:', res.status);
+    const txt = await res.text();
+    log('Response body:', txt);
+  } catch (e) {
+    log('Fetch error:', e);
+  }
+})();
+</script>
+</body></html>
