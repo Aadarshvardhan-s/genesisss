@@ -127,7 +127,6 @@
 <script type="module">
 import GICAuth from './auth-global.js';
 import supabase from './supabase-config.js';
-await GICAuth.ready;
 function getSession() { const c = GICAuth.getSessionSync(); if (c && c.profile) return c.profile; if (c && c.session) return { id: c.session.user.id, email: c.session.user.email }; return null; }
 function clearSession() { GICAuth.signOut(); }
 
