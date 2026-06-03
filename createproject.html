@@ -220,7 +220,6 @@
 <script type="module">
 import GICAuth from './auth-global.js';
 import supabase from './supabase-config.js';
-await GICAuth.ready;
 
 async function getSession() {
   const g = await GICAuth.getSession();
