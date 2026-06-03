@@ -6,7 +6,7 @@
  */
 
 /* ─── Constants ────────────────────────────────────────────────── */
-import supabase, { auth, storage } from '../supabase-config.js';
+import supabase, { auth, storage } from './supabase-config.js';
 
 let currentProfile = null;
 
